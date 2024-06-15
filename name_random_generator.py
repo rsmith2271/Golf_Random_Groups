@@ -130,32 +130,35 @@ def main():
         print("4. 7 players (Groups are a 3, 2 & 2)")
         choice = input("\nEnter the selection (1-4): ")
         choice_correct = validation_check(choice)
-        if choice_correct == True and int(choice) >= 1 and int(choice) <= 4:
-            break
-        else:
+        if choice_correct == True and int(choice) < 1 and int(choice) > 4:
             continue
-    
-    choice = int(choice)
 
-    match choice:
-        case 1:
-            pairs(name_list)
-        case 2:
-            trios(name_list)
-        case 3:
-            quads(name_list)
-        case 4:
-            if len(name_list) != 7:
-                print("\nThere are not seven players, try again!")
-            else:
-                print("\nThe groups are:\n")
-                pairs_result = generate_name_pairs(name_list)
-                leftover_pairs = compare_pairs_to_list(pairs_result, name_list)
-                print(f"{pairs_result[0][0]} - {pairs_result[0][1]} - {leftover_pairs[-1]}")
-                print(f"{pairs_result[1][0]} - {pairs_result[1][1]}")
-                print(f"{pairs_result[2][0]} - {pairs_result[2][1]}\n")
-        case _ :
-            pass
+        #choice = int(choice)
+
+        match choice:
+            case "1":
+                pairs(name_list)
+                break
+            case "2":
+                trios(name_list)
+                break
+            case "3":
+                quads(name_list)
+                break
+            case "4":
+                if len(name_list) != 7:
+                    print("\nThere are not seven players, try again!")
+                    continue
+                else:
+                    print("\nThe groups are:\n")
+                    pairs_result = generate_name_pairs(name_list)
+                    leftover_pairs = compare_pairs_to_list(pairs_result, name_list)
+                    print(f"{pairs_result[0][0]} - {pairs_result[0][1]} - {leftover_pairs[-1]}")
+                    print(f"{pairs_result[1][0]} - {pairs_result[1][1]}")
+                    print(f"{pairs_result[2][0]} - {pairs_result[2][1]}\n")
+                    break
+            case _ :
+                break
 
 if __name__ == "__main__":
     main()
