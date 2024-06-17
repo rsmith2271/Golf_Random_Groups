@@ -106,13 +106,8 @@ def validation_check(user_input): # function to return True or False depending o
     except:
         print(f"The input '{user_input}' is not a valid number.Try again!")
         return False
-
-def main():
-    print("****************************************")
-    print("Random name generator for the Golf Buddies (By Rob Smith)")
-    print("")
     
-    name_list = []
+def names_input(name_list):
     print("Enter the names that are playing one by one ('x' to finish)\n")
     while True:
         print("Enter name: ", end = "")
@@ -122,6 +117,16 @@ def main():
         else:
             name_list.append(name)
             continue
+    return name_list
+
+def main():
+    print("****************************************")
+    print("Random group generator for the Golf Buddies (By Rob Smith)")
+    print("")
+    
+    name_list = []
+    name_list = names_input(name_list)
+
     while True:
         print("\nIs the booking for:\n")
         print("1. Pairs")
@@ -132,8 +137,6 @@ def main():
         choice_correct = validation_check(choice)
         if choice_correct == True and int(choice) < 1 and int(choice) > 4:
             continue
-
-        #choice = int(choice)
 
         match choice:
             case "1":
@@ -146,17 +149,25 @@ def main():
                 quads(name_list)
                 break
             case "4":
-                if len(name_list) != 7:
-                    print("\nThere are not seven players, try again!")
-                    continue
-                else:
-                    print("\nThe groups are:\n")
-                    pairs_result = generate_name_pairs(name_list)
-                    leftover_pairs = compare_pairs_to_list(pairs_result, name_list)
-                    print(f"{pairs_result[0][0]} - {pairs_result[0][1]} - {leftover_pairs[-1]}")
-                    print(f"{pairs_result[1][0]} - {pairs_result[1][1]}")
-                    print(f"{pairs_result[2][0]} - {pairs_result[2][1]}\n")
-                    break
+                    while True:
+                        if len(name_list) != 7:
+                            additional_players = input("\nThere are not seven players, do you want to add more players (y or n): ", end = "")
+                            match additional_players:
+                                case "y":
+                                    name_list = names_input(name_list)
+                                case "n":
+                                    break
+                                case _ :
+                                    print("\nEnter 'y' or 'n'\n")
+                                    continue
+                        else:
+                            print("\nThe groups are:\n")
+                            pairs_result = generate_name_pairs(name_list)
+                            leftover_pairs = compare_pairs_to_list(pairs_result, name_list)
+                            print(f"{pairs_result[0][0]} - {pairs_result[0][1]} - {leftover_pairs[-1]}")
+                            print(f"{pairs_result[1][0]} - {pairs_result[1][1]}")
+                            print(f"{pairs_result[2][0]} - {pairs_result[2][1]}\n")
+                            break
             case _ :
                 break
 
