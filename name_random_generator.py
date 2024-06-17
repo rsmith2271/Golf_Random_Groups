@@ -52,50 +52,54 @@ def compare_quads_to_list(list_of_quads, target_list):
     return results
 
 def pairs(name_list):
-    print("\nThe pairs are:\n")
+    i = 1
+    print("\nThe group(s) are:\n")
     pairs_result = generate_name_pairs(name_list)
     for pair in pairs_result:
-        print(f"{pair[0]} - {pair[1]}")
-
+        print(f"{i}. {pair[0]} - {pair[1]}")
+        i += 1
     leftover_pairs = compare_pairs_to_list(pairs_result, name_list)
-    div2 = len(leftover_pairs)%2
+    div2 = len(name_list)%2
     match div2:
+
         case 1:
-            print(f"{leftover_pairs[-1]} is on his own\n")
+            print(f"{i}. {leftover_pairs[-1]} is on his own\n")
         case _:
             pass
 
 def trios(name_list):
-    print("\nThe trios are:\n")
+    i=1
+    print("\nThe group(s) are:\n")
     trios_result = generate_name_trios(name_list)
     for trio in trios_result:
-        print(f"{trio[0]} - {trio[1]} - {trio[2]}")
-
+        print(f"{i}. {trio[0]} - {trio[1]} - {trio[2]}")
+        i += 1
     leftover_trios = compare_trios_to_list(trios_result, name_list)
-    div3 = len(leftover_trios)%3
+    div3 = len(name_list)%3
     match div3:
         case 1:
-            print(f"{leftover_trios[-1]} is on his own\n")
+            print(f"{i}. {leftover_trios[-1]} is on his own\n")
         case 2:
-            print(f"{leftover_trios[-1]} - {leftover_trios[-2]}\n")
+            print(f"{i}. {leftover_trios[-1]} - {leftover_trios[-2]}\n")
         case _:
             pass
 
 def quads(name_list):
-    print("\nThe quads are:\n")
+    i = 1
+    print("\nThe group(s) are:\n")
     quads_result = generate_name_quads(name_list)
     for quad in quads_result:
-        print(f"{quad[0]} - {quad[1]} - {quad[2]} - {quad[3]}")
-
+        print(f"{i}. {quad[0]} - {quad[1]} - {quad[2]} - {quad[3]}")
+        i += 1
     leftover_quads = compare_quads_to_list(quads_result, name_list)
-    div4 = len(leftover_quads)%4
+    div4 = len(name_list)%4
     match div4:
         case 1:
-            print(f"{leftover_quads[-1]} is on his own\n")
+            print(f"{i}. {leftover_quads[-1]} is on his own\n")
         case 2:
-            print(f"{leftover_quads[-1]} - {leftover_quads[-2]}\n")
+            print(f"{i}. {leftover_quads[-1]} - {leftover_quads[-2]}\n")
         case 3:
-            print(f"{leftover_quads[-1]} - {leftover_quads[-2]} - {leftover_quads[-3]}\n")
+            print(f"{i}. {leftover_quads[-1]} - {leftover_quads[-2]} - {leftover_quads[-3]}\n")
         case _:
             pass
 
@@ -140,18 +144,54 @@ def main():
 
         match choice:
             case "1":
-                pairs(name_list)
-                break
+                 while True:
+                        if len(name_list) < 2:
+                            additional_players = input("\nThere are not two players, do you want to add more players (y or n): ")
+                            match additional_players:
+                                case "y":
+                                    name_list = names_input(name_list)
+                                case "n":
+                                    break
+                                case _ :
+                                    print("\nEnter 'y' or 'n'\n")
+                                    continue
+                        else:
+                            pairs(name_list)
+                            exit()
             case "2":
-                trios(name_list)
-                break
+                 while True:
+                        if len(name_list) < 3:
+                            additional_players = input("\nThere are not three players, do you want to add more players (y or n): ")
+                            match additional_players:
+                                case "y":
+                                    name_list = names_input(name_list)
+                                case "n":
+                                    break
+                                case _ :
+                                    print("\nEnter 'y' or 'n'\n")
+                                    continue
+                        else:
+                            trios(name_list)
+                            exit()
             case "3":
-                quads(name_list)
-                break
+                 while True:
+                        if len(name_list) < 4:
+                            additional_players = input("\nThere are not four players, do you want to add more players (y or n): ")
+                            match additional_players:
+                                case "y":
+                                    name_list = names_input(name_list)
+                                case "n":
+                                    break
+                                case _ :
+                                    print("\nEnter 'y' or 'n'\n")
+                                    continue
+                        else:
+                            quads(name_list)
+                            exit()
             case "4":
                     while True:
                         if len(name_list) != 7:
-                            additional_players = input("\nThere are not seven players, do you want to add more players (y or n): ", end = "")
+                            additional_players = input("\nThere are not seven players, do you want to add more players (y or n): ")
                             match additional_players:
                                 case "y":
                                     name_list = names_input(name_list)
@@ -164,10 +204,10 @@ def main():
                             print("\nThe groups are:\n")
                             pairs_result = generate_name_pairs(name_list)
                             leftover_pairs = compare_pairs_to_list(pairs_result, name_list)
-                            print(f"{pairs_result[0][0]} - {pairs_result[0][1]} - {leftover_pairs[-1]}")
-                            print(f"{pairs_result[1][0]} - {pairs_result[1][1]}")
-                            print(f"{pairs_result[2][0]} - {pairs_result[2][1]}\n")
-                            break
+                            print(f"1. {pairs_result[0][0]} - {pairs_result[0][1]} - {leftover_pairs[-1]}")
+                            print(f"2. {pairs_result[1][0]} - {pairs_result[1][1]}")
+                            print(f"3. {pairs_result[2][0]} - {pairs_result[2][1]}\n")
+                            exit()
             case _ :
                 break
 
