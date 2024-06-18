@@ -28,8 +28,9 @@ def compare_pairs_to_list(list_of_pairs, target_list):
     results = []
     for element in target_list:
         for pair in list_of_pairs:
-            if pair[0] != element != pair[1]:
+            if pair[0] != element != pair[1]: # AND condition
                 results.append(element)
+                print(f"The results to date is: {results}")
                 break  # Exit inner loop if a match is found
     return results
 
@@ -61,7 +62,6 @@ def pairs(name_list):
     leftover_pairs = compare_pairs_to_list(pairs_result, name_list)
     div2 = len(name_list)%2
     match div2:
-
         case 1:
             print(f"{i}. {leftover_pairs[-1]} is on his own\n")
         case _:
