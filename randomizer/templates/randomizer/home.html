@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf Buddies Random Group Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .player-list {
+            min-height: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            margin: 5px 0;
+            background-color: #f8f9fa;
+            border-radius: 0.25rem;
+        }
+        .results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Golf Buddies Random Group Generator</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Add Players</h5>
+                        <div class="input-group mb-3">
+                            <input type="text" id="playerName" class="form-control" placeholder="Enter player name">
+                            <button class="btn btn-primary" id="addPlayer">Add Player</button>
+                        </div>
+                        
+                        <h5>Current Players</h5>
+                        <div class="player-list" id="playerList"></div>
+                        
+                        <div class="form-group">
+                            <h5>Select Group Type</h5>
+                            <div class="btn-group-vertical w-100" role="group">
+                                <input type="radio" class="btn-check" name="groupType" id="pairs" value="pairs" checked>
+                                <label class="btn btn-outline-primary" for="pairs">Pairs</label>
+                                
+                                <input type="radio" class="btn-check" name="groupType" id="trios" value="trios">
+                                <label class="btn btn-outline-primary" for="trios">Trios</label>
+                                
+                                <input type="radio" class="btn-check" name="groupType" id="quads" value="quads">
+                                <label class="btn btn-outline-primary" for="quads">Quads</label>
+                                
+                                <input type="radio" class="btn-check" name="groupType" id="seven" value="seven">
+                                <label class="btn btn-outline-primary" for="seven">7 Players (3-2-2)</label>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-success w-100 mt-3" id="generateGroups">Generate Groups</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Generated Groups</h5>
+                        <div id="results" class="results"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const players = new Set();
+            
+            function updatePlayerList() {
+                const list = $('#playerList');
+                list.empty();
+                players.forEach(player => {
+                    const item = $('<div class="player-item"></div>');
+                    item.append($('<span></span>').text(player));
+                    const removeBtn = $('<button class="btn btn-danger btn-sm">Remove</button>');
+                    removeBtn.click(() => {
+                        players.delete(player);
+                        updatePlayerList();
+                    });
+                    item.append(removeBtn);
+                    list.append(item);
+                });
+            }
+            
+            $('#addPlayer').click(() => {
+                const name = $('#playerName').val().trim();
+                if (name) {
+                    players.add(name);
+                    $('#playerName').val('');
+                    updatePlayerList();
+                }
+            });
+            
+            $('#playerName').keypress((e) => {
+                if (e.which === 13) {
+                    $('#addPlayer').click();
+                }
+            });
+            
+            $('#generateGroups').click(() => {
+                const groupType = $('input[name="groupType"]:checked').val();
+                
+                $.ajax({
+                    url: '{% url "randomizer:generate_groups" %}',
+                    method: 'POST',
+                    data: {
+                        'names[]': Array.from(players),
+                        'group_type': groupType,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        const results = $('#results');
+                        results.empty();
+                        
+                        if (response.error) {
+                            results.append($('<div class="alert alert-danger"></div>').text(response.error));
+                            return;
+                        }
+                        
+                        response.groups.forEach((group, index) => {
+                            const groupDiv = $('<div class="alert alert-success"></div>');
+                            groupDiv.text(`Group ${index + 1}: ${group.join(' - ')}`);
+                            results.append(groupDiv);
+                        });
+                        
+                        if (response.leftover.length > 0) {
+                            const leftoverDiv = $('<div class="alert alert-warning"></div>');
+                            leftoverDiv.text(`Leftover players: ${response.leftover.join(' - ')}`);
+                            results.append(leftoverDiv);
+                        }
+                    },
+                    error: function() {
+                        $('#results').html('<div class="alert alert-danger">An error occurred while generating groups.</div>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
