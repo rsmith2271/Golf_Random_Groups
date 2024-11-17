@@ -214,5 +214,6 @@ def main():
                 break
 
 if __name__ == "__main__":
-    app = GolfRandomizer()
-    app.mainloop()
+    #app = GolfRandomizer()
+    #app.mainloop()
+    main()
