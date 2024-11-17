@@ -1,13 +1,46 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from name_random_generator import generate_name_pairs, generate_name_trios, generate_name_quads
 import random
 
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('randomizer:home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'randomizer/register.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('randomizer:home')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'randomizer/login.html', {'form': form})
+
+@login_required
 def home(request):
     return render(request, 'randomizer/home.html')
 
+@login_required
 def generate_groups(request):
     if request.method == 'POST':
+        if not request.is_ajax():
+            return JsonResponse({'error': 'Invalid request'}, status=400)
+            
         names = request.POST.getlist('names[]')
         group_type = request.POST.get('group_type')
         
@@ -39,6 +72,8 @@ def generate_groups(request):
                 names_copy[3:5],
                 names_copy[5:]
             ]
+        else:
+            return JsonResponse({'error': 'Invalid group type'}, status=400)
             
         # Handle leftover players
         used_names = set()
@@ -53,4 +88,4 @@ def generate_groups(request):
             'leftover': leftover
         })
         
-    return JsonResponse({'error': 'Invalid request method'})
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
